@@ -5,7 +5,7 @@ import FilterSidebar from '../components/trail/FilterSidebar'
 import TrailCard from '../components/trail/TrailCard'
 import TrailMap from '../components/trail/TrailMap'
 import { trails } from '../data/trails'
-import { useLocalStorage } from '../hooks/useLocalStorage'
+import { useTrailLists } from '../hooks/useTrailLists'
 
 const defaultFilters = {
   difficulty: [],
@@ -20,14 +20,7 @@ export default function Home() {
   const [query, setQuery] = useState('')
   const [filters, setFilters] = useState(defaultFilters)
   const [showMap, setShowMap] = useState(false)
-  const [savedIds, setSavedIds] = useLocalStorage('trail-atlas:bucket-list', [])
-  const [completedIds, setCompletedIds] = useLocalStorage('trail-atlas:completed', [])
-
-  const toggleSave = (id) =>
-    setSavedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
-
-  const toggleComplete = (id) =>
-    setCompletedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]))
+  const { isSaved, isCompleted, toggleSaved, toggleCompleted } = useTrailLists()
 
   const filteredTrails = useMemo(() => {
     return trails.filter((trail) => {
@@ -53,11 +46,14 @@ export default function Home() {
     <div>
       <Hero query={query} onQueryChange={setQuery} />
 
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-6 lg:flex-row">
+      <div className="mx-auto max-w-[1800px] px-4 py-10 sm:px-6 lg:px-10">
+        {/* items-start (not the flex default of stretch) so the filter card
+            hugs its own content instead of stretching to match the taller
+            results column next to it. */}
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
           <FilterSidebar filters={filters} onChange={setFilters} />
 
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <div className="mb-4 flex items-center justify-between">
               <p className="text-sm text-pine-700/60 dark:text-tan-100/60">
                 <span className="font-mono font-semibold text-pine-700 dark:text-tan-100">
@@ -75,16 +71,23 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-              <div className={`col-span-1 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-3 ${showMap ? 'hidden lg:grid' : ''}`}>
+            {/* Cards keep a fixed, readable width (2-up) instead of growing
+                with the viewport; the map is a flex child that claims
+                whatever space is left over on wide screens. */}
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+              <div
+                className={`grid grid-cols-1 gap-5 sm:grid-cols-2 lg:w-[640px] lg:shrink-0 ${
+                  showMap ? 'hidden lg:grid' : ''
+                }`}
+              >
                 {filteredTrails.map((trail) => (
                   <TrailCard
                     key={trail.id}
                     trail={trail}
-                    isSaved={savedIds.includes(trail.id)}
-                    isCompleted={completedIds.includes(trail.id)}
-                    onToggleSave={toggleSave}
-                    onToggleComplete={toggleComplete}
+                    isSaved={isSaved(trail.id)}
+                    isCompleted={isCompleted(trail.id)}
+                    onToggleSave={toggleSaved}
+                    onToggleComplete={toggleCompleted}
                   />
                 ))}
                 {filteredTrails.length === 0 && (
@@ -94,7 +97,11 @@ export default function Home() {
                 )}
               </div>
 
-              <div className={`col-span-1 h-[500px] lg:col-span-2 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] ${showMap ? '' : 'hidden lg:block'}`}>
+              <div
+                className={`h-[500px] flex-1 lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)] ${
+                  showMap ? '' : 'hidden lg:block'
+                }`}
+              >
                 <TrailMap trails={filteredTrails} />
               </div>
             </div>

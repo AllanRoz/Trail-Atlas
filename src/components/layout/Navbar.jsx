@@ -12,7 +12,7 @@ const links = [
 export default function Navbar({ isDark, onToggleDark }) {
   return (
     <header className="sticky top-0 z-50 border-b border-pine-100 bg-summit/90 backdrop-blur dark:border-pine-500/30 dark:bg-pine-900/90">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <nav className="mx-auto flex h-16 max-w-[1800px] items-center justify-between px-4 sm:px-6 lg:px-10">
         <NavLink to="/" className="flex items-center gap-2 font-display text-xl text-pine-700 dark:text-tan-100">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-pine-700 text-tan-300 dark:bg-tan-300 dark:text-pine-900">
             <Mountain size={18} strokeWidth={2.5} />

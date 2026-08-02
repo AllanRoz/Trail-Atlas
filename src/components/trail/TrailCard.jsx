@@ -65,7 +65,7 @@ export default function TrailCard({ trail, isSaved, isCompleted, onToggleSave, o
           </div>
         </dl>
 
-        <div className="mt-4 flex items-center gap-2">
+        <div className="mt-auto flex items-center gap-2 pt-4">
           <Link
             to={`/trails/${trail.id}`}
             className="flex-1 rounded-full bg-pine-700 px-4 py-2 text-center text-sm font-medium text-tan-100 transition-colors hover:bg-pine-500 dark:bg-tan-300 dark:text-pine-900 dark:hover:bg-tan-500"
