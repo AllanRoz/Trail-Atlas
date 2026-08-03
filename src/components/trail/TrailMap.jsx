@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import { Link } from 'react-router-dom'
 import L from 'leaflet'
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
@@ -15,18 +15,32 @@ const defaultIcon = L.icon({
   popupAnchor: [1, -34],
 })
 
-export default function TrailMap({ trails, className = 'h-full w-full', zoom = 4 }) {
+export default function TrailMap({ trails, className = 'h-full w-full', zoom = 4, route = null }) {
   const center = trails.length
     ? [trails[0].lat, trails[0].lng]
     : [39.8283, -98.5795] // fallback: geographic center of the contiguous US
 
+  const bounds = route && route.length > 1 ? L.latLngBounds(route) : null
+
   return (
     <div className={className}>
-      <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} className="h-full w-full rounded-2xl">
+      <MapContainer
+        {...(bounds ? { bounds, boundsOptions: { padding: [28, 28] } } : { center, zoom })}
+        scrollWheelZoom={false}
+        className="h-full w-full rounded-2xl"
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {route && (
+          <Polyline
+            positions={route}
+            pathOptions={{ color: '#B5562A', weight: 4, opacity: 0.85, lineCap: 'round' }}
+          />
+        )}
+
         {trails.map((trail) => (
           <Marker key={trail.id} position={[trail.lat, trail.lng]} icon={defaultIcon}>
             <Popup>

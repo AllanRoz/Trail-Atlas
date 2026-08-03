@@ -10,8 +10,9 @@ GitHub Pages.
   max distance, max elevation gain, dog friendly / waterfalls / scenic views), a 3-column trail
   card grid, and a live Leaflet/OpenStreetMap panel with popups, all filtering the same 50-trail
   dataset in real time.
-- **Trail Detail** — hero image, stats, description, photo gallery, features, best season,
-  parking info, an embedded map, and Add to Bucket List / Mark Completed actions.
+- **Trail Detail** — hero image, stats, description, live current + 7-day weather forecast at
+  the trailhead, features, best season, parking info, an embedded map with an illustrative route
+  overlay, and Add to Bucket List / Mark Completed actions.
 - **Bucket List** — saved trails with sorting by date added, difficulty, distance, or state.
 - **Completed Hikes** — completed trails plus rollup stats (total miles, elevation climbed,
   states visited, parks visited).
@@ -30,9 +31,17 @@ parking info, best season). It was produced by `generate-trails.mjs` in the proj
 `node generate-trails.mjs > src/data/trails.js` if you edit the seed list or want to add more
 trails; it's not part of the built app.
 
-Hero/thumbnail/gallery images are seeded [Picsum](https://picsum.photos) placeholders
-(deterministic per trail id, so they always resolve) — swap in real trail photography before
-using this for anything beyond a demo.
+Hero/thumbnail images are seeded [Picsum](https://picsum.photos) placeholders (deterministic per
+trail id, so they always resolve) — swap in real trail photography before using this for anything
+beyond a demo.
+
+Weather on the Trail Detail page comes from [Open-Meteo](https://open-meteo.com) — free, no API
+key, browser-CORS-friendly, so it doesn't violate the "no backend, no paid APIs" constraint. It's
+the one live network call in an otherwise fully static app.
+
+The route line on the Trail Detail map is a **deterministic illustrative approximation**
+(`src/utils/generateRoute.js`), not a real GPS track — this dataset doesn't include GPX/GeoJSON
+trail geometry. Swap in real track data per trail if you need an accurate route.
 
 ## Not yet built
 

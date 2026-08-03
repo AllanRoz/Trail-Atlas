@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Bookmark, CheckCircle2, MapPin, Mountain as ElevationIcon, Star, Clock, Calendar, ParkingCircle, Tag } from 'lucide-react'
+import { Bookmark, CheckCircle2, MapPin, Mountain as ElevationIcon, Star, Clock, Calendar, ParkingCircle, Tag, Route as RouteIcon } from 'lucide-react'
 import DifficultyBadge from '../components/trail/DifficultyBadge'
 import TrailMap from '../components/trail/TrailMap'
+import WeatherPanel from '../components/trail/WeatherPanel'
 import { trails } from '../data/trails'
 import { useTrailLists } from '../hooks/useTrailLists'
+import { generateApproxRoute } from '../utils/generateRoute'
 import { cn } from '../utils/cn'
 
 function StatBlock({ icon: Icon, label, value }) {
@@ -25,7 +27,10 @@ export default function TrailDetail() {
   const { id } = useParams()
   const trail = trails.find((t) => t.id === id)
   const { isSaved, isCompleted, toggleSaved, toggleCompleted } = useTrailLists()
-  const [activeImage, setActiveImage] = useState(0)
+
+  // Route is generated deterministically from the trail id — see the
+  // module for why (no real GPS track data behind this dataset yet).
+  const route = useMemo(() => (trail ? generateApproxRoute(trail) : null), [trail])
 
   if (!trail) {
     return (
@@ -38,17 +43,13 @@ export default function TrailDetail() {
     )
   }
 
-  // Gallery: a few deterministic, differently-seeded placeholder photos per
-  // trail (real trail photography would replace these seeds 1:1).
-  const gallery = [trail.heroImage, ...[1, 2, 3].map((n) => `https://picsum.photos/seed/${trail.id}-${n}/800/600`)]
-
   const saved = isSaved(trail.id)
   const completed = isCompleted(trail.id)
 
   return (
     <div>
       <div className="relative h-[45vh] min-h-[320px] w-full overflow-hidden sm:h-[55vh]">
-        <img src={gallery[activeImage]} alt={trail.name} className="h-full w-full object-cover" />
+        <img src={trail.heroImage} alt={trail.name} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-pine-900/85 via-pine-900/20 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 mx-auto max-w-5xl px-4 pb-8 sm:px-6">
           <Link to="/" className="text-sm text-tan-100/80 underline">
@@ -116,22 +117,9 @@ export default function TrailDetail() {
             </section>
 
             <section>
-              <h2 className="font-display text-xl text-pine-700 dark:text-tan-100">Photo Gallery</h2>
-              <div className="mt-3 grid grid-cols-4 gap-2">
-                {gallery.map((src, i) => (
-                  <button
-                    key={src}
-                    type="button"
-                    onClick={() => setActiveImage(i)}
-                    aria-label={`Show photo ${i + 1}`}
-                    className={cn(
-                      'aspect-square overflow-hidden rounded-xl border-2 transition-colors',
-                      activeImage === i ? 'border-moss-500' : 'border-transparent',
-                    )}
-                  >
-                    <img src={src} alt="" className="h-full w-full object-cover" />
-                  </button>
-                ))}
+              <h2 className="font-display text-xl text-pine-700 dark:text-tan-100">Weather at the Trailhead</h2>
+              <div className="mt-3">
+                <WeatherPanel lat={trail.lat} lng={trail.lng} />
               </div>
             </section>
 
@@ -165,8 +153,16 @@ export default function TrailDetail() {
               <p className="text-sm text-pine-700/70 dark:text-tan-100/70">{trail.parkingInfo}</p>
             </div>
 
-            <div className="h-64 overflow-hidden rounded-2xl shadow-card">
-              <TrailMap trails={[trail]} zoom={12} />
+            <div>
+              <h3 className="mb-3 flex items-center gap-2 font-display text-base text-pine-700 dark:text-tan-100">
+                <RouteIcon size={16} /> Route
+              </h3>
+              <div className="h-64 overflow-hidden rounded-2xl shadow-card">
+                <TrailMap trails={[trail]} route={route} />
+              </div>
+              <p className="mt-2 text-[11px] leading-snug text-pine-700/40 dark:text-tan-100/40">
+                Route shown is an illustrative approximation, not a surveyed GPS track.
+              </p>
             </div>
           </aside>
         </div>
