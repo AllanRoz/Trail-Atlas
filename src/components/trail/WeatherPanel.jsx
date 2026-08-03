@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Wind, Loader2, CloudOff } from 'lucide-react'
+import { Wind, Loader2, CloudOff, Sunrise, Sunset } from 'lucide-react'
 import { weatherFromCode } from '../../utils/weatherCodes'
 
 const dayFormatter = new Intl.DateTimeFormat('en-US', { weekday: 'short' })
+const timeFormatter = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' })
 
 // Open-Meteo requires no API key and allows browser-side CORS requests,
 // which is why it's the one live network call in an otherwise fully static
@@ -14,7 +15,7 @@ export default function WeatherPanel({ lat, lng }) {
     let cancelled = false
     setState({ status: 'loading', data: null })
 
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7`
 
     fetch(url)
       .then((res) => {
@@ -54,22 +55,45 @@ export default function WeatherPanel({ lat, lng }) {
   const { current, daily } = state.data
   const currentWeather = weatherFromCode(current.weather_code)
   const CurrentIcon = currentWeather.icon
+  const sunrise = daily.sunrise?.[0] ? timeFormatter.format(new Date(daily.sunrise[0])) : null
+  const sunset = daily.sunset?.[0] ? timeFormatter.format(new Date(daily.sunset[0])) : null
 
   return (
     <div className="rounded-2xl bg-white p-5 shadow-card dark:bg-pine-700/40">
-      <div className="flex items-center gap-4 border-b border-pine-100 pb-5 dark:border-pine-500/20">
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-sky/15 text-sky-600 dark:text-sky">
-          <CurrentIcon size={28} />
-        </span>
-        <div>
-          <p className="font-mono text-3xl font-semibold text-pine-700 dark:text-tan-100">
-            {Math.round(current.temperature_2m)}°F
-          </p>
-          <p className="text-sm text-pine-700/60 dark:text-tan-100/60">{currentWeather.label} at the trailhead</p>
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-pine-700/45 dark:text-tan-100/45">
-            <Wind size={12} /> {Math.round(current.wind_speed_10m)} mph wind
-          </p>
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-pine-100 pb-5 dark:border-pine-500/20">
+        <div className="flex items-center gap-4">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-sky/15 text-sky-600 dark:text-sky">
+            <CurrentIcon size={28} />
+          </span>
+          <div>
+            <p className="font-mono text-3xl font-semibold text-pine-700 dark:text-tan-100">
+              {Math.round(current.temperature_2m)}°F
+            </p>
+            <p className="text-sm text-pine-700/60 dark:text-tan-100/60">{currentWeather.label} at the trailhead</p>
+            <p className="mt-0.5 flex items-center gap-1 text-xs text-pine-700/45 dark:text-tan-100/45">
+              <Wind size={12} /> {Math.round(current.wind_speed_10m)} mph wind
+            </p>
+          </div>
         </div>
+
+        {(sunrise || sunset) && (
+          <div className="flex gap-5">
+            {sunrise && (
+              <div className="flex flex-col items-center gap-1">
+                <Sunrise size={20} className="text-tan-500" />
+                <p className="font-mono text-sm text-pine-700 dark:text-tan-100">{sunrise}</p>
+                <p className="text-[10px] uppercase tracking-wide text-pine-700/40 dark:text-tan-100/40">Sunrise</p>
+              </div>
+            )}
+            {sunset && (
+              <div className="flex flex-col items-center gap-1">
+                <Sunset size={20} className="text-clay" />
+                <p className="font-mono text-sm text-pine-700 dark:text-tan-100">{sunset}</p>
+                <p className="text-[10px] uppercase tracking-wide text-pine-700/40 dark:text-tan-100/40">Sunset</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="mt-5 grid grid-cols-4 gap-2 sm:grid-cols-7">

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { Bookmark, CheckCircle2, MapPin, Mountain as ElevationIcon, Star, Clock, Calendar, ParkingCircle, Tag, Route as RouteIcon } from 'lucide-react'
+import { Bookmark, CheckCircle2, MapPin, Mountain as ElevationIcon, Star, Clock, Calendar, ParkingCircle, Tag, Route as RouteIcon, Loader2 } from 'lucide-react'
 import DifficultyBadge from '../components/trail/DifficultyBadge'
 import TrailMap from '../components/trail/TrailMap'
 import WeatherPanel from '../components/trail/WeatherPanel'
@@ -28,9 +28,15 @@ export default function TrailDetail() {
   const trail = trails.find((t) => t.id === id)
   const { isSaved, isCompleted, toggleSaved, toggleCompleted } = useTrailLists()
 
-  // Tries a real GPX-derived route first (public/routes/{id}.json), falls
-  // back to a generated illustrative path if that trail hasn't been
+  // Tries a real GPX/JSON-derived route first (public/routes/{id}.json),
+  // falls back to a generated illustrative path if that trail hasn't been
   // converted yet — see src/utils/generateRoute.js.
+  //
+  // Important: TrailMap (react-leaflet) only applies its initial center/zoom/
+  // bounds once, on mount — it does NOT re-fit when those props change later.
+  // So the map below is only rendered once `route` has actually resolved;
+  // otherwise it would mount too early with the wrong view and get stuck
+  // zoomed out once the real route arrived.
   const [route, setRoute] = useState(null)
   const [routeIsReal, setRouteIsReal] = useState(false)
 
@@ -141,6 +147,27 @@ export default function TrailDetail() {
             </section>
 
             <section>
+              <h2 className="mb-3 flex items-center gap-2 font-display text-xl text-pine-700 dark:text-tan-100">
+                <RouteIcon size={18} /> Route
+              </h2>
+              <div className="h-[420px] overflow-hidden rounded-2xl shadow-card sm:h-[480px]">
+                {route ? (
+                  <TrailMap trails={[trail]} route={route} />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center gap-2 rounded-2xl bg-white text-sm text-pine-700/50 dark:bg-pine-700/40 dark:text-tan-100/50">
+                    <Loader2 size={16} className="animate-spin" />
+                    Loading route…
+                  </div>
+                )}
+              </div>
+              <p className="mt-2 text-[11px] leading-snug text-pine-700/40 dark:text-tan-100/40">
+                {routeIsReal
+                  ? 'Route from a recorded GPS track.'
+                  : "Route shown is an illustrative approximation — no GPS track uploaded for this trail yet."}
+              </p>
+            </section>
+
+            <section>
               <h2 className="font-display text-xl text-pine-700 dark:text-tan-100">Features</h2>
               <div className="mt-3 flex flex-wrap gap-2">
                 {trail.features.map((f) => (
@@ -168,20 +195,6 @@ export default function TrailDetail() {
                 <ParkingCircle size={16} /> Parking
               </h3>
               <p className="text-sm text-pine-700/70 dark:text-tan-100/70">{trail.parkingInfo}</p>
-            </div>
-
-            <div>
-              <h3 className="mb-3 flex items-center gap-2 font-display text-base text-pine-700 dark:text-tan-100">
-                <RouteIcon size={16} /> Route
-              </h3>
-              <div className="h-64 overflow-hidden rounded-2xl shadow-card">
-                <TrailMap trails={[trail]} route={route} />
-              </div>
-              <p className="mt-2 text-[11px] leading-snug text-pine-700/40 dark:text-tan-100/40">
-                {routeIsReal
-                  ? 'Route from a recorded GPS track.'
-                  : "Route shown is an illustrative approximation — no GPS track uploaded for this trail yet."}
-              </p>
             </div>
           </aside>
         </div>
