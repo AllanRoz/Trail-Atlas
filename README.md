@@ -4,23 +4,40 @@ A static, client-only hiking bucket-list app. React + Vite + Tailwind + Leaflet,
 persisted to `localStorage`. No backend, no auth, no paid APIs — designed to host for free on
 GitHub Pages.
 
-## Milestone 1 (this delivery)
+## What's built
 
-- Project structure (`components/`, `pages/`, `hooks/`, `data/`, `utils/`, `styles/`)
-- Vite + Tailwind configured, with a small custom design-token set (see `tailwind.config.js`)
-- Routing for all five top-level pages (Home, Trail Detail, Bucket List, Completed, Dashboard) —
-  the latter three are stubs for now
-- Sticky, responsive navigation (desktop top bar + mobile bottom bar) with dark mode toggle
-- Full Home page: hero + live search, filter sidebar, trail card grid, Leaflet/OpenStreetMap
-  markers with popups, all wired together and filtering a small seed dataset (6 trails)
+- **Explore (Home)** — hero search, a filter bar (state, national park, difficulty, route type,
+  max distance, max elevation gain, dog friendly / waterfalls / scenic views), a 3-column trail
+  card grid, and a live Leaflet/OpenStreetMap panel with popups, all filtering the same 50-trail
+  dataset in real time.
+- **Trail Detail** — hero image, stats, description, photo gallery, features, best season,
+  parking info, an embedded map, and Add to Bucket List / Mark Completed actions.
+- **Bucket List** — saved trails with sorting by date added, difficulty, distance, or state.
+- **Completed Hikes** — completed trails plus rollup stats (total miles, elevation climbed,
+  states visited, parks visited).
+- **Dashboard** — bucket list count, completed count, completion %, mileage, and elevation, plus
+  charts for hikes by difficulty, monthly completions, and cumulative distance over time
+  (Recharts).
+- Sticky, responsive navigation (desktop top bar + mobile bottom bar) with dark mode.
+- All save/complete state lives in one shared hook (`src/hooks/useTrailLists.js`) backed by
+  `localStorage`, so every page reflects the same data.
 
-## Not yet built (future milestones)
+## Data
 
-- Full 50+ trail dataset with galleries, parking info, best season, etc.
-- Trail Detail page content
-- Bucket List sorting/removal
-- Completed Hikes tracking (date, personal rating, notes, favorite) + stats
-- Dashboard charts (Recharts is already in `package.json`, not yet wired up)
+`src/data/trails.js` ships with 50 real U.S. trails (name, state, park, coordinates, distance,
+elevation gain, estimated time, difficulty, rating, description, hero/thumbnail images, features,
+parking info, best season). It was produced by `generate-trails.mjs` in the project root — rerun
+`node generate-trails.mjs > src/data/trails.js` if you edit the seed list or want to add more
+trails; it's not part of the built app.
+
+Hero/thumbnail/gallery images are seeded [Picsum](https://picsum.photos) placeholders
+(deterministic per trail id, so they always resolve) — swap in real trail photography before
+using this for anything beyond a demo.
+
+## Not yet built
+
+- Per-hike completion detail (personal rating, notes, favorite flag) — the data shape already
+  reserves fields for this (`rating`, `notes`, `favorite` on each completed entry), just no UI yet.
 
 ## Getting started
 

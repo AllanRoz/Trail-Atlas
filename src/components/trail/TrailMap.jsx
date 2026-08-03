@@ -15,14 +15,14 @@ const defaultIcon = L.icon({
   popupAnchor: [1, -34],
 })
 
-export default function TrailMap({ trails, className = 'h-full w-full' }) {
+export default function TrailMap({ trails, className = 'h-full w-full', zoom = 4 }) {
   const center = trails.length
     ? [trails[0].lat, trails[0].lng]
     : [39.8283, -98.5795] // fallback: geographic center of the contiguous US
 
   return (
     <div className={className}>
-      <MapContainer center={center} zoom={4} scrollWheelZoom={false} className="h-full w-full rounded-2xl">
+      <MapContainer center={center} zoom={zoom} scrollWheelZoom={false} className="h-full w-full rounded-2xl">
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

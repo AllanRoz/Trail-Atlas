@@ -32,7 +32,7 @@ export default function TrailCard({ trail, isSaved, isCompleted, onToggleSave, o
 
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-lg leading-tight text-pine-700 dark:text-tan-100">
+          <h3 className="line-clamp-2 font-display text-lg leading-tight text-pine-700 dark:text-tan-100">
             {trail.name}
           </h3>
           <span className="flex shrink-0 items-center gap-1 font-mono text-sm text-pine-700 dark:text-tan-100">
@@ -41,9 +41,9 @@ export default function TrailCard({ trail, isSaved, isCompleted, onToggleSave, o
           </span>
         </div>
 
-        <p className="mt-1 flex items-center gap-1 text-sm text-pine-700/60 dark:text-tan-100/60">
-          <MapPin size={13} />
-          {trail.nationalPark}, {trail.state}
+        <p className="mt-1 line-clamp-2 min-h-[2.5rem] flex items-start gap-1 text-sm text-pine-700/60 dark:text-tan-100/60">
+          <MapPin size={13} className="mt-0.5 shrink-0" />
+          <span>{trail.nationalPark}, {trail.state}</span>
         </p>
 
         <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-pine-100 pt-3 font-mono text-xs text-pine-700/80 dark:border-pine-500/20 dark:text-tan-100/70">
