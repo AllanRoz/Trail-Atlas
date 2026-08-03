@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { Bookmark, CheckCircle2, MapPin, Mountain as ElevationIcon, Star, Clock, Calendar, ParkingCircle, Tag, Route as RouteIcon } from 'lucide-react'
 import DifficultyBadge from '../components/trail/DifficultyBadge'
@@ -6,7 +6,7 @@ import TrailMap from '../components/trail/TrailMap'
 import WeatherPanel from '../components/trail/WeatherPanel'
 import { trails } from '../data/trails'
 import { useTrailLists } from '../hooks/useTrailLists'
-import { generateApproxRoute } from '../utils/generateRoute'
+import { loadRoute } from '../utils/generateRoute'
 import { cn } from '../utils/cn'
 
 function StatBlock({ icon: Icon, label, value }) {
@@ -28,9 +28,26 @@ export default function TrailDetail() {
   const trail = trails.find((t) => t.id === id)
   const { isSaved, isCompleted, toggleSaved, toggleCompleted } = useTrailLists()
 
-  // Route is generated deterministically from the trail id — see the
-  // module for why (no real GPS track data behind this dataset yet).
-  const route = useMemo(() => (trail ? generateApproxRoute(trail) : null), [trail])
+  // Tries a real GPX-derived route first (public/routes/{id}.json), falls
+  // back to a generated illustrative path if that trail hasn't been
+  // converted yet — see src/utils/generateRoute.js.
+  const [route, setRoute] = useState(null)
+  const [routeIsReal, setRouteIsReal] = useState(false)
+
+  useEffect(() => {
+    if (!trail) return
+    let cancelled = false
+    setRoute(null)
+    loadRoute(trail).then(({ points, isReal }) => {
+      if (!cancelled) {
+        setRoute(points)
+        setRouteIsReal(isReal)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [trail])
 
   if (!trail) {
     return (
@@ -161,7 +178,9 @@ export default function TrailDetail() {
                 <TrailMap trails={[trail]} route={route} />
               </div>
               <p className="mt-2 text-[11px] leading-snug text-pine-700/40 dark:text-tan-100/40">
-                Route shown is an illustrative approximation, not a surveyed GPS track.
+                {routeIsReal
+                  ? 'Route from a recorded GPS track.'
+                  : "Route shown is an illustrative approximation — no GPS track uploaded for this trail yet."}
               </p>
             </div>
           </aside>

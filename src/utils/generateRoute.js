@@ -49,3 +49,23 @@ export function generateApproxRoute(trail, segments = 7) {
 
   return points
 }
+
+// Looks for a real route at /routes/{id}.json (produced by
+// scripts/gpx-to-json.mjs from a downloaded .gpx file). Falls back to the
+// generated illustrative route if no file exists for this trail yet — so
+// you can convert GPX files trail-by-trail without anything breaking in
+// the meantime.
+export async function loadRoute(trail) {
+  try {
+    const res = await fetch(`${import.meta.env.BASE_URL}routes/${trail.id}.json`)
+    if (res.ok) {
+      const points = await res.json()
+      if (Array.isArray(points) && points.length > 1) {
+        return { points, isReal: true }
+      }
+    }
+  } catch {
+    // network hiccup or missing file — fall through to the generated route
+  }
+  return { points: generateApproxRoute(trail), isReal: false }
+}

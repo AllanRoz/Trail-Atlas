@@ -40,8 +40,25 @@ key, browser-CORS-friendly, so it doesn't violate the "no backend, no paid APIs"
 the one live network call in an otherwise fully static app.
 
 The route line on the Trail Detail map is a **deterministic illustrative approximation**
-(`src/utils/generateRoute.js`), not a real GPS track — this dataset doesn't include GPX/GeoJSON
-trail geometry. Swap in real track data per trail if you need an accurate route.
+(`src/utils/generateRoute.js`) by default — this dataset doesn't include real GPS trail geometry.
+
+### Adding real routes
+
+1. Download track files for your trails — `.gpx` or `.json` both work — named to match each
+   trail's `id` in `src/data/trails.js` (e.g. `angels-landing.gpx`, `half-dome.json`).
+2. Run:
+   ```bash
+   node scripts/convert-routes.mjs path/to/your/tracks-folder
+   ```
+   This extracts and downsamples each track's points and writes `public/routes/{trail-id}.json`.
+   JSON files are auto-detected across a few common shapes — GeoJSON `Feature`/`FeatureCollection`
+   (handles the `[lng, lat]` coordinate order GeoJSON uses, flipping it to `[lat, lng]`), a plain
+   array of `[lat, lng]` or `[lng, lat]` pairs (order is auto-detected), or an array of
+   `{lat, lng}` / `{latitude, longitude}` objects — nested under a `coordinates`, `points`,
+   `track`, or `trk` key if needed.
+3. Commit those JSON files. That's it — no code changes needed. The Trail Detail page checks
+   `public/routes/{id}.json` first and only falls back to the generated route if that file
+   doesn't exist, so you can convert trails one at a time.
 
 ## Not yet built
 
