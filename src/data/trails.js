@@ -70,8 +70,8 @@ export const trails = [
     "difficulty": "Moderate",
     "rating": 4.6,
     "description": "Skyline Trail climbs 1,700 ft over 5.5 miles through Mount Rainier National Park in Washington, a moderate loop known for cascading waterfalls and sweeping viewpoints.",
-    "heroImage": "https://picsum.photos/seed/skyline-trail/1600/900",
-    "thumbnail": "https://picsum.photos/seed/skyline-trail/600/400",
+    "heroImage": "https://explorewithalec.com/wp-content/uploads/2022/09/skyline-loop-trail-6S7A0019-scaled.jpg",
+    "thumbnail": "https://explorewithalec.com/wp-content/uploads/2022/09/skyline-loop-trail-6S7A0019-scaled.jpg",
     "features": [
       "Waterfalls",
       "Scenic Views",
