@@ -6,5 +6,5 @@ import react from '@vitejs/plugin-react'
 // or a user/organization page (username.github.io), change this back to '/'.
 export default defineConfig({
   plugins: [react()],
-  base: '/trail-atlas/',
+  base: '/Trail-Atlas/',
 })
