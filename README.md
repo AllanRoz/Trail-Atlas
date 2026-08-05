@@ -7,7 +7,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/AllanRoz/Trail-Atlas">
-    <img src="public/logo.png" alt="Logo" width="80" height="80">
+    <img src="public/mountain-icon.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">Trail Atlas</h3>
