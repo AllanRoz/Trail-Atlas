@@ -185,6 +185,7 @@ Quickly find trails using:
 
 <!-- FUTURE FEATURES -->
 
+<!--
 ## Future Improvements
 
 Planned enhancements include:
@@ -201,6 +202,7 @@ Planned enhancements include:
 * Data backup and restore
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+-->
 
 <!-- LICENSE -->
 
