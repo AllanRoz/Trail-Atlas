@@ -1,83 +1,239 @@
-# Trail Atlas
+# Trail-Atlas
 
-A static, client-only hiking bucket-list app. React + Vite + Tailwind + Leaflet, everything
-persisted to `localStorage`. No backend, no auth, no paid APIs — designed to host for free on
-GitHub Pages.
+<a id="readme-top"></a>
 
-## What's built
+<!-- PROJECT LOGO -->
 
-- **Explore (Home)** — hero search, a filter bar (state, national park, difficulty, route type,
-  max distance, max elevation gain, dog friendly / waterfalls / scenic views), a 3-column trail
-  card grid, and a live Leaflet/OpenStreetMap panel with popups, all filtering the same 50-trail
-  dataset in real time.
-- **Trail Detail** — hero image, stats, description, live current + 7-day weather forecast at
-  the trailhead, features, best season, parking info, an embedded map with an illustrative route
-  overlay, and Add to Bucket List / Mark Completed actions.
-- **Bucket List** — saved trails with sorting by date added, difficulty, distance, or state.
-- **Completed Hikes** — completed trails plus rollup stats (total miles, elevation climbed,
-  states visited, parks visited).
-- **Dashboard** — bucket list count, completed count, completion %, mileage, and elevation, plus
-  charts for hikes by difficulty, monthly completions, and cumulative distance over time
-  (Recharts).
-- Sticky, responsive navigation (desktop top bar + mobile bottom bar) with dark mode.
-- All save/complete state lives in one shared hook (`src/hooks/useTrailLists.js`) backed by
-  `localStorage`, so every page reflects the same data.
+<br />
+<div align="center">
+  <a href="https://github.com/AllanRoz/Trail-Atlas">
+    <img src="public/logo.png" alt="Logo" width="80" height="80">
+  </a>
 
-## Data
+  <h3 align="center">Trail Atlas</h3>
 
-`src/data/trails.js` ships with 50 real U.S. trails (name, state, park, coordinates, distance,
-elevation gain, estimated time, difficulty, rating, description, hero/thumbnail images, features,
-parking info, best season). It was produced by `generate-trails.mjs` in the project root — rerun
-`node generate-trails.mjs > src/data/trails.js` if you edit the seed list or want to add more
-trails; it's not part of the built app.
+  <p align="center">
+    A modern hiking bucket list and trail discovery application for outdoor enthusiasts.
+    <br />
+    <br />
+    <a href="https://allanroz.github.io/Trail-Atlas/">View Demo</a>
+    &middot;
+    <a href="https://github.com/AllanRoz/Trail-Atlas/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    &middot;
+    <a href="https://github.com/AllanRoz/Trail-Atlas/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+  </p>
+</div>
 
-Hero/thumbnail images are seeded [Picsum](https://picsum.photos) placeholders (deterministic per
-trail id, so they always resolve) — swap in real trail photography before using this for anything
-beyond a demo.
+<!-- ABOUT THE PROJECT -->
 
-Weather on the Trail Detail page comes from [Open-Meteo](https://open-meteo.com) — free, no API
-key, browser-CORS-friendly, so it doesn't violate the "no backend, no paid APIs" constraint. It's
-the one live network call in an otherwise fully static app.
+## About The Project
 
-The route line on the Trail Detail map is a **deterministic illustrative approximation**
-(`src/utils/generateRoute.js`) by default — this dataset doesn't include real GPS trail geometry.
+[![Product Screenshot][product-screenshot]](https://allanroz.github.io/Trail-Atlas/)
 
-### Adding real routes
+**Trail Atlas** is an interactive web application designed to help hikers discover, organize, and track hiking trails across the United States. Whether you're planning your next adventure or documenting completed hikes, Trail Atlas provides a clean and intuitive interface for building your personal hiking bucket list.
 
-1. Download track files for your trails — `.gpx` or `.json` both work — named to match each
-   trail's `id` in `src/data/trails.js` (e.g. `angels-landing.gpx`, `half-dome.json`).
-2. Run:
-   ```bash
-   node scripts/convert-routes.mjs path/to/your/tracks-folder
+Browse trails, explore interactive maps, filter by difficulty and location, and monitor your hiking progress—all within a fast, fully static web application hosted on GitHub Pages.
+
+### Key Features
+
+* **Interactive Trail Explorer:** Browse an extensive collection of hiking trails with beautiful cards and detailed trail information.
+* **Interactive Map:** Explore trail locations using Leaflet and OpenStreetMap with clickable markers and trail previews.
+* **Advanced Search & Filtering:** Filter trails by state, national park, difficulty, distance, elevation gain, trail type, waterfalls, scenic views, and more.
+* **Personal Bucket List:** Save hikes you want to complete and organize your future adventures.
+* **Completed Hike Tracker:** Mark trails as completed and automatically track hiking statistics.
+* **Hiking Dashboard:** View total hikes completed, miles hiked, elevation climbed, completion percentage, and other personal achievements.
+* **Offline Data Storage:** All user progress is stored locally in the browser using LocalStorage—no accounts or backend required.
+* **Responsive Design:** Optimized for desktop, tablet, and mobile devices with optional dark mode support.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Built With
+
+* [![React][React.js]][React-url]
+* [![JavaScript][JavaScript.js]][JavaScript-url]
+* [![Vite][Vite.dev]][Vite-url]
+* [![TailwindCSS][Tailwind.css]][Tailwind-url]
+* [![Leaflet][Leaflet.js]][Leaflet-url]
+* [![Chart.js][Chart.js]][Chart-url]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- GETTING STARTED -->
+
+## Getting Started
+
+Follow these steps to set up and run a local copy of the project.
+
+### Prerequisites
+
+* npm
+
+  ```sh
+  npm install npm@latest -g
+  ```
+
+### Installation and Running Locally
+
+1. Clone the repository
+
+   ```sh
+   git clone https://github.com/AllanRoz/Trail-Atlas.git
    ```
-   This extracts and downsamples each track's points and writes `public/routes/{trail-id}.json`.
-   JSON files are auto-detected across a few common shapes — GeoJSON `Feature`/`FeatureCollection`
-   (handles the `[lng, lat]` coordinate order GeoJSON uses, flipping it to `[lat, lng]`), a plain
-   array of `[lat, lng]` or `[lng, lat]` pairs (order is auto-detected), or an array of
-   `{lat, lng}` / `{latitude, longitude}` objects — nested under a `coordinates`, `points`,
-   `track`, or `trk` key if needed.
-3. Commit those JSON files. That's it — no code changes needed. The Trail Detail page checks
-   `public/routes/{id}.json` first and only falls back to the generated route if that file
-   doesn't exist, so you can convert trails one at a time.
 
-## Not yet built
+2. Navigate into the project directory
 
-- Per-hike completion detail (personal rating, notes, favorite flag) — the data shape already
-  reserves fields for this (`rating`, `notes`, `favorite` on each completed entry), just no UI yet.
+   ```sh
+   cd Trail-Atlas
+   ```
 
-## Getting started
+3. Install dependencies
 
-```bash
-npm install
-npm run dev
-```
+   ```sh
+   npm install
+   ```
 
-## Deploying to GitHub Pages
+4. Start the development server
 
-1. Push this project to a GitHub repo named `trail-atlas` (or update `base` in
-   `vite.config.js` to match whatever your repo is named).
-2. `npm run build` — this outputs static files to `dist/`.
-3. `npm run deploy` — uses `gh-pages` to publish `dist/` to the `gh-pages` branch.
-4. In your repo's Settings → Pages, set the source to the `gh-pages` branch.
+   ```sh
+   npm run dev
+   ```
 
-Your site will be live at `https://<your-username>.github.io/trail-atlas/`.
+5. Build for production
+
+   ```sh
+   npm run build
+   ```
+
+6. Preview the production build
+
+   ```sh
+   npm run preview
+   ```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- FEATURES -->
+
+## Features
+
+### 🗺️ Interactive Trail Map
+
+* Explore trails across the United States using an interactive Leaflet map.
+* Click markers to quickly preview trail information.
+* Easily navigate between the map and trail detail pages.
+
+### 🥾 Trail Discovery
+
+Discover trails with detailed information including:
+
+* Difficulty
+* Distance
+* Elevation gain
+* Estimated hiking time
+* Trail type
+* Ratings
+* Best seasons
+* Trail highlights
+
+### ⭐ Bucket List
+
+Create your personal hiking bucket list by saving trails for future adventures.
+
+Features include:
+
+* Save and remove trails
+* Sort by difficulty, state, or date added
+* Quick access to planned hikes
+
+### ✅ Completed Hikes
+
+Keep a record of every trail you've conquered.
+
+Track:
+
+* Completion date
+* Personal rating
+* Personal notes
+* Favorite hikes
+
+### 📊 Hiking Statistics
+
+Visualize your hiking journey with interactive charts and statistics.
+
+Track:
+
+* Total hikes completed
+* Total mileage
+* Elevation climbed
+* States visited
+* National Parks explored
+* Completion progress
+
+### 🔍 Smart Search
+
+Quickly find trails using:
+
+* State
+* National Park
+* Difficulty
+* Distance
+* Elevation gain
+* Trail features
+* Instant keyword search
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- FUTURE FEATURES -->
+
+## Future Improvements
+
+Planned enhancements include:
+
+* GPX file import and export
+* Trail elevation profiles
+* Weather forecasts
+* Sunrise and sunset information
+* Offline trail support
+* Trail photo galleries
+* User-created hiking journals
+* Achievement badges
+* Trail collections and favorites
+* Data backup and restore
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- LICENSE -->
+
+## License
+
+Distributed under the GPL-3.0 License. See `LICENSE` for more information.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- CONTACT -->
+
+## Contact
+
+Allan Rozario - [arozadev@gmail.com](mailto:arozadev@gmail.com)
+
+Project Link: https://github.com/AllanRoz/Trail-Atlas
+
+Live Demo: https://allanroz.github.io/Trail-Atlas/
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+
+[product-screenshot]: public/TrailAtlas.png
+[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
+[React-url]: https://react.dev/
+[JavaScript.js]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
+[JavaScript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+[Vite.dev]: https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white
+[Vite-url]: https://vite.dev/
+[Tailwind.css]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
+[Tailwind-url]: https://tailwindcss.com/
+[Leaflet.js]: https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white
+[Leaflet-url]: https://leafletjs.com/
+[Chart.js]: https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white
+[Chart-url]: https://www.chartjs.org/
