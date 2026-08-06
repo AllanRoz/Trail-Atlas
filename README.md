@@ -50,7 +50,7 @@ Browse trails, explore interactive maps, filter by difficulty and location, and 
 ### Built With
 
 * [![React][React.js]][React-url]
-* [![TypeScript][TypeScript.js]][TypeScript-url]
+* [![JavaScript][JavaScript.js]][JavaScript-url]
 * [![Vite][Vite.dev]][Vite-url]
 * [![TailwindCSS][Tailwind.css]][Tailwind-url]
 * [![Leaflet][Leaflet.js]][Leaflet-url]
@@ -229,8 +229,8 @@ Live Demo: https://allanroz.github.io/Trail-Atlas/
 [product-screenshot]: public/TrailAtlas.png
 [React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
 [React-url]: https://react.dev/
-[TypeScript.js]: https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white
-[TypeScript-url]: https://www.typescriptlang.org/
+[JavaScript.js]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
+[JavaScript-url]: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [Vite.dev]: https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white
 [Vite-url]: https://vite.dev/
 [Tailwind.css]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white
